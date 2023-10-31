@@ -33,10 +33,6 @@
 #include "estimator.h"
 
 static uint16_t ranges[RANGE_T_END] = {0,};
-static uint16_t fake1 = 0;
-static uint16_t fake2 = 0;
-static uint16_t fake3 = 0;
-
 
 void rangeSet(rangeDirection_t direction, float range_m)
 {
@@ -52,58 +48,10 @@ float rangeGet(rangeDirection_t direction)
   return ranges[direction];
 }
 
-
-float pre_zrange = 0.0;
-bool onboard = false;
-int epoch = 0;
-float pre_height = 0.0;
 void rangeEnqueueDownRangeInEstimator(float distance, float stdDev, uint32_t timeStamp) {
   tofMeasurement_t tofData;
   tofData.timestamp = timeStamp;
-
-
-
-  float desk_height = 0.75;
-  // on board
-  if ((distance - pre_zrange)<(float)(-0.600 ) ){
-    onboard = true;
-  }
-  else if((distance - pre_zrange)>(float)(+0.600)){
-    onboard = false;
-  }
-
-
-  float tem_height = 0.0;
-  if (onboard==true){
-    tem_height = distance + desk_height;
-  }
-  else{
-    tem_height = distance;
-  }
-  
-  fake3 = pre_height *1000;
-
-
-  if(((tem_height-pre_height)>(float)0.06) || ((tem_height-pre_height)<(float)-0.06)){
-    
-    tofData.distance = pre_height;
-    
-  }
-  else{
-
-    tofData.distance = tem_height;
-    pre_height = tem_height;
-  }
-  // tofData.distance
-
-  epoch++;
-  if (epoch % 8 == 0)
-  {
-    epoch = 0;
-    pre_zrange = distance;}
-
-  fake1 = tem_height * 1000;
-  fake2 = tofData.distance*1000;
+  tofData.distance = distance;
   tofData.stdDev = stdDev;
   estimatorEnqueueTOF(&tofData);
 }
@@ -141,21 +89,4 @@ LOG_ADD_CORE(LOG_UINT16, right, &ranges[rangeRight])
  * @brief Distance from the Z-ranger (bottom) sensor to an obstacle [mm]
  */
 LOG_ADD_CORE(LOG_UINT16, zrange, &ranges[rangeDown])
-
-/**
- * @brief Distance from the Z-ranger (bottom) sensor to an obstacle [mm]
- */
-LOG_ADD_CORE(LOG_UINT16, high1, &fake2)
-
-/**
- * @brief Distance from the Z-ranger (bottom) sensor to an obstacle [mm]
- */
-LOG_ADD_CORE(LOG_UINT16, high2, &fake2)
-
-/**
- * @brief Distance from the Z-ranger (bottom) sensor to an obstacle [mm]
- */
-LOG_ADD_CORE(LOG_UINT16, high3, &fake3)
-
-
 LOG_GROUP_STOP(range)
