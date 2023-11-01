@@ -6,6 +6,11 @@ from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.positioning.motion_commander import MotionCommander
 from cflib.crazyflie.log import LogConfig
 import keyboard
+import datetime
+# 获取当前日期和时间
+current_datetime = datetime.datetime.now()
+# 将日期和时间格式化为字符串，例如：2023-11-01_12
+datetime_string = current_datetime.strftime("%m%d-%H%M")
 
 
 URI = 'radio://0/80/2M/E7E7E7E706'
@@ -69,83 +74,87 @@ if __name__ == '__main__':
         mc = MotionCommander(scf)
         mc.take_off()
         print('Taking off!')
-        while True:
-            # Check for keyboard input
-            # print('round')
+        try:
+            while True:
+                # Check for keyboard input
+                # print('round')
 
-            if keyboard.is_pressed('up'):
-                # Move forward
-                print('Moving forward 0.1m')
-                mc.forward(0.1)
-            elif keyboard.is_pressed('down'):
-                # Move backward
-                print('Moving backward 0.1m')
-                mc.back(0.1)
-            elif keyboard.is_pressed('f'):
-                # Move forward
-                print('Moving forward 2m')
-                mc.forward(2,0.2)
-            elif keyboard.is_pressed('b'):
-                # Move backward
-                print('Moving backward 2m')
-                mc.back(2,0.2)
-            elif keyboard.is_pressed('left'):
-                # Move left
-                print('Moving left 0.1m')
-                mc.left(0.1)
-            elif keyboard.is_pressed('right'):
-                # Move right
-                print('Moving right 0.1m')
-                mc.right(0.1)
-            elif keyboard.is_pressed('w'):
-                # Move up
-                print('Moving up 0.1m')
-                mc.up(0.1)
-            elif keyboard.is_pressed('s'):
-                # Move down
-                print('Moving down 0.1m')
-                mc.down(0.1)
-            elif keyboard.is_pressed('a'):
-                # Rotate left
-                print('Rotating left')
-                mc.turn_left(10)
-            elif keyboard.is_pressed('d'):
-                # Rotate right
-                print('Rotating right')
-                mc.turn_right(10)
-            elif keyboard.is_pressed(' '):
-                # Hover in place
-                print('Hovering')
-                mc.hove()
-            elif keyboard.is_pressed('o'):
+                if keyboard.is_pressed('up'):
+                    # Move forward
+                    print('Moving forward 0.1m')
+                    mc.forward(0.1)
+                elif keyboard.is_pressed('down'):
+                    # Move backward
+                    print('Moving backward 0.1m')
+                    mc.back(0.1)
+                elif keyboard.is_pressed('f'):
+                    # Move forward
+                    print('Moving forward 2m')
+                    mc.forward(2,0.2)
+                elif keyboard.is_pressed('b'):
+                    # Move backward
+                    print('Moving backward 2m')
+                    mc.back(2,0.2)
+                elif keyboard.is_pressed('left'):
+                    # Move left
+                    print('Moving left 0.1m')
+                    mc.left(0.1)
+                elif keyboard.is_pressed('right'):
+                    # Move right
+                    print('Moving right 0.1m')
+                    mc.right(0.1)
+                elif keyboard.is_pressed('w'):
+                    # Move up
+                    print('Moving up 0.1m')
+                    mc.up(0.1)
+                elif keyboard.is_pressed('s'):
+                    # Move down
+                    print('Moving down 0.1m')
+                    mc.down(0.1)
+                elif keyboard.is_pressed('a'):
+                    # Rotate left
+                    print('Rotating left')
+                    mc.turn_left(10)
+                elif keyboard.is_pressed('d'):
+                    # Rotate right
+                    print('Rotating right')
+                    mc.turn_right(10)
+                elif keyboard.is_pressed(' '):
+                    # Hover in place
+                    print('Hovering')
+                    mc.hove()
+                elif keyboard.is_pressed('o'):
 
-                flight_time = 2.0
+                    flight_time = 2.0
 
-                commander = scf.cf.high_level_commander
+                    commander = scf.cf.high_level_commander
 
-                commander.go_to(0, 0, 1.2, 0, flight_time, relative=False)
-                time.sleep(flight_time)
+                    commander.go_to(0, 0, 1.2, 0, flight_time, relative=False)
+                    time.sleep(flight_time)
 
-            elif keyboard.is_pressed('p'):
-                flight_time = 8.0
+                elif keyboard.is_pressed('p'):
+                    flight_time = 8.0
 
-                commander = scf.cf.high_level_commander
+                    commander = scf.cf.high_level_commander
 
-                commander.go_to(1.5, 0, 1.2, 0, flight_time, relative=False)
-                time.sleep(flight_time)
+                    commander.go_to(1.5, 0, 1.2, 0, flight_time, relative=False)
+                    time.sleep(flight_time)
 
 
-            # Check for ESC key press
-            if keyboard.is_pressed('esc'):
-                # Land and stop the MotionCommander object
-                print('Landing!')
-                mc.land()
-                # mc.stop()
-                imu_log_config.stop()
+                # Check for ESC key press
+                if keyboard.is_pressed('esc'):
+                    # Land and stop the MotionCommander object
+                    print('Landing!')
+                    mc.land()
+                    # mc.stop()
+                    imu_log_config.stop()
+                    
+                    # Save the IMU data to a file
+                    np.savetxt('/home/nuci7/project/cf2/crazyflie-firmware/control/data/imu_data_'+datetime_string+'.csv', imu_data, delimiter=',')
+                    break
 
-                # Save the IMU data to a file
-                np.savetxt('/home/nuci7/project/cf2/crazyflie-firmware/control/data/imu_data.csv', imu_data, delimiter=',')
-                break
+                # Wait a bit before checking for input again
+                time.sleep(0.02)
 
-            # Wait a bit before checking for input again
-            time.sleep(0.02)
+        except:
+            np.savetxt('/home/nuci7/project/cf2/crazyflie-firmware/control/data/imu_data_'+datetime_string+'.csv', imu_data, delimiter=',')
