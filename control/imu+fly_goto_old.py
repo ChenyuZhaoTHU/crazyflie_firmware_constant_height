@@ -19,25 +19,20 @@ URI = 'radio://0/80/2M/E7E7E7E706'
 logging.basicConfig(level=logging.ERROR)
 
 # Create an empty NumPy array to hold the IMU data
-imu_data = np.empty((0, 9))
+imu_data = np.empty((0, 8))
 
 def process_imu_data(timestamp, data, logconf):
     global imu_data
-    
-    gyro_x = data['gyro.xRaw']
-    gyro_y = data['gyro.yRaw']
-    gyro_z = data['gyro.zRaw']
-    motor1 = data['motor.m1']
-    motor2 = data['motor.m2']
-    motor3 = data['motor.m3']
-    motor4 = data['motor.m4']
-
-
-
+    acc_x = data['acc.x']
+    acc_y = data['acc.y']
+    acc_z = data['acc.z']
+    gyro_x = data['gyro.x']
+    gyro_y = data['gyro.y']
+    gyro_z = data['gyro.z']
     current_time = time.monotonic() - start_time
     height = data['range.zrange']
     # print(f"IMU data: acc_x={acc_x}, acc_y={acc_y}, acc_z={acc_z}, gyro_x={gyro_x}, gyro_y={gyro_y}, gyro_z={gyro_z},time={current_time}")
-    imu_data = np.vstack((imu_data, [gyro_x, gyro_y, gyro_z, motor1, motor2, motor3, motor4, current_time, height]))
+    imu_data = np.vstack((imu_data, [acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z, current_time, height]))
 
 
 
@@ -67,12 +62,11 @@ if __name__ == '__main__':
         imu_log_config.add_variable('gyro.xRaw', 'int16_t')
         imu_log_config.add_variable('gyro.yRaw', 'int16_t')
         imu_log_config.add_variable('gyro.zRaw', 'int16_t')
+        imu_log_config.add_variable('range.zrange', 'uint16_t')
         imu_log_config.add_variable('motor.m1', 'uint32_t')
         imu_log_config.add_variable('motor.m2', 'uint32_t')
         imu_log_config.add_variable('motor.m3', 'uint32_t')
         imu_log_config.add_variable('motor.m4', 'uint32_t')
-        imu_log_config.add_variable('range.zrange', 'uint16_t')
-
 
         cf.log.add_config(imu_log_config)
         start_time = time.monotonic()
@@ -105,11 +99,11 @@ if __name__ == '__main__':
                 elif keyboard.is_pressed('f'):
                     # Move forward
                     print('Moving forward 2m')
-                    mc.forward(2,0.2)
+                    mc.forward(2,0.1)
                 elif keyboard.is_pressed('b'):
                     # Move backward
                     print('Moving backward 2m')
-                    mc.back(2,0.2)
+                    mc.back(2,0.1)
                 elif keyboard.is_pressed('left'):
                     # Move left
                     print('Moving left 0.1m')
