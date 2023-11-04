@@ -19,10 +19,10 @@ def load_data():
         train_data[i+13,:,:] = np.loadtxt('/home/nuci7/project/cf2/crazyflie-firmware/control/train_data/on45_'+str(i+1)+'.txt')
 
     print(np.shape(train_data))
-    # for p in range(np.shape(train_data)[0]):
-    #     train_data[p,:,4] = train_data[p,:,4] / train_data[p,:,3]
-    #     train_data[p,:,5] = train_data[p,:,5] / train_data[p,:,3]
-    #     train_data[p,:,6] = train_data[p,:,6] / train_data[p,:,3]
+    for p in range(np.shape(train_data)[0]):
+        train_data[p,:,4] = train_data[p,:,4] - train_data[p,:,3]
+        train_data[p,:,5] = train_data[p,:,5] - train_data[p,:,3]
+        train_data[p,:,6] = train_data[p,:,6] - train_data[p,:,3]
     # train_data = np.delete(train_data, [3,4,5,6,7], 1)
     train_data = tf.expand_dims(train_data,-1)
     train_data = np.delete(train_data, [3,7,8], 2)
