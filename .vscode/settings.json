@@ -6,6 +6,7 @@
     },
     "files.associations": {
         "bootloader.h": "c",
-        "pid.h": "c"
+        "pid.h": "c",
+        "param.h": "c"
     }
 }

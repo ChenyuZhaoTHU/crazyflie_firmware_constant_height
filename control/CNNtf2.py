@@ -16,16 +16,16 @@ import scipy.signal as signal_p
 
 def load_data():
     # on00all = np.zeros((30,200,9))
-    train_data = np.zeros((90,200,9))
+    train_data = np.zeros((60,400,9))
     
     for i in range(30):
-        train_data[i,:,:] = np.loadtxt('/home/nuci7/project/cf2/crazyflie-firmware/control/train_data/on135_'+str(i+1)+'.txt')
+        train_data[i,:,:] = np.loadtxt('/home/nuci7/project/cf2/crazyflie-firmware/control/train_data2/on00_'+str(i+1)+'.txt')
     # on45all = np.zeros((30,200,9))
     for i in range(30):
-        train_data[i+30,:,:] = np.loadtxt('/home/nuci7/project/cf2/crazyflie-firmware/control/train_data/on30_'+str(i+1)+'.txt')
-    for i in range(30):
-        print(i)
-        train_data[i+60,:,:] = np.loadtxt('/home/nuci7/project/cf2/crazyflie-firmware/control/train_data/on00_'+str(i+1)+'.txt')
+        train_data[i+30,:,:] = np.loadtxt('/home/nuci7/project/cf2/crazyflie-firmware/control/train_data2/on45_'+str(i+1)+'.txt')
+    # for i in range(30):
+    #     print(i)
+    #     train_data[i+60,:,:] = np.loadtxt('/home/nuci7/project/cf2/crazyflie-firmware/control/train_data/on00_'+str(i+1)+'.txt')
 
     # FILTER
     # Define filter parameters
@@ -39,7 +39,7 @@ def load_data():
     signalf = signal_p.filtfilt(b, a, train_data[:,:,:7], axis=1)
 
     train_data = signalf
-    train_data = train_data[:,80:105,:]
+    # train_data = train_data[:,80:105,:]
 
     # print(np.shape(train_data))
     # for p in range(np.shape(train_data)[0]):
@@ -58,7 +58,7 @@ def load_data():
 
 
     # train_data = np.delete(train_data, [3], 2)
-    train_stft = np.zeros((90,11,8,np.shape(train_data)[2]))
+    train_stft = np.zeros((60,11,101,np.shape(train_data)[2]))
     for i in range(np.shape(train_data)[0]):
         for j in range(np.shape(train_data)[2]):
             # print(np.shape(train_data[i,:,j]))
@@ -78,16 +78,19 @@ def load_data():
 
 
 
-    label1 = np.zeros((90,3))
+    label1 = np.zeros((60,2))
     label1[:30,0] = 1
     label1[30:60,1] = 1
-    label1[60:,2] = 1
+    # label1[60:,2] = 1
     print(label1)
     # return label1
 
-    perm = np.random.permutation(train_stft.shape[0])
-    X_shuffled = train_stft[perm,:,:,:]
+    perm = np.random.permutation(train_data.shape[0])
+    X_shuffled = train_data[perm,:,:]
     y_shuffled = label1[perm,:]
+
+
+    X_shuffled = tf.expand_dims(X_shuffled,-1)
 
 
 
@@ -122,7 +125,7 @@ class CNN(object):
         model.add(tf.keras.layers.Dense(32))
         model.add(tf.keras.layers.Dense(16))
         model.add(tf.keras.layers.Dense(10))
-        model.add(tf.keras.layers.Dense(3, activation=tf.nn.softmax))
+        model.add(tf.keras.layers.Dense(2, activation=tf.nn.softmax))
         model.compile(loss='mse', optimizer='adam', metrics='accuracy')
         model.summary()
         self.model = model
@@ -165,16 +168,16 @@ class Train():
     
     def train(self):
     # train model
-        history_usr1 = self.model_usr1.model.fit(self.input1_train[3:85,:,:,:], self.label1[3:85,:], epochs=900, batch_size = 8, 
-                            validation_split=0.20, verbose=1, shuffle=True)
+        history_usr1 = self.model_usr1.model.fit(self.input1_train[3:57,:,:,:], self.label1[3:57,:], epochs=1300, batch_size = 2, 
+                            validation_split=0.30, verbose=1, shuffle=True)
         # history_usr2 = self.model_usr2.model.fit(self.input2_train, self.label2, epochs=1, batch_size = 1280,
         #                     validation_split=0.25, verbose=1, shuffle=True)
 
 
         os.makedirs('savedmodel', exist_ok=True)
         self.model_usr1.model.save('/home/nuci7/project/cf2/crazyflie-firmware/control/savedmodel/cnn_usr1_model.h5')
-        print(history_usr1.history.keys())
-        print(history_usr1.history['loss'],history_usr1.history['val_loss'])
+        # print(history_usr1.history.keys())
+        # print(history_usr1.history['loss'],history_usr1.history['val_loss'])
         plt.figure(1)
         plt.plot(history_usr1.history['loss'])
         plt.plot(history_usr1.history['val_loss'])
@@ -279,13 +282,13 @@ def test_n(test_data, test_label):
     # print(np.shape(load_data()[2:3,:,:,:]))
 
     # test_data, test_label = load_data()
-    ooout1 = model_pre1.predict(test_data[3:10,:,:,:])
-    ooout2 = model_pre1.predict(test_data[80:85,:,:,:])
+    ooout1 = model_pre1.predict(test_data[0:3,:,:,:])
+    ooout2 = model_pre1.predict(test_data[57:,:,:,:])
     # ooout3 = model_pre1.predict(load_data()[85:90,:,:,:])
     # print(np.shape(test_label1))
     # print(np.shape(ooout1))
-    print(ooout1,'\n',test_label[3:10,:])
-    print(ooout2,'\n',test_label[80:85,:])
+    print(ooout1,'\n',test_label[0:3,:])
+    print(ooout2,'\n',test_label[57:,:])
     # print(ooout3)
 
 
