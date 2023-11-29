@@ -730,4 +730,41 @@ LOG_ADD_CORE(LOG_UINT32, m3, &motor_ratios[MOTOR_M3])
  * @brief Motor power (PWM value) for M4 [0 - UINT16_MAX]
  */
 LOG_ADD_CORE(LOG_UINT32, m4, &motor_ratios[MOTOR_M4])
+
+
+
+LOG_ADD_CORE(LOG_UINT16, m1s, &motor_ratios[MOTOR_M1])
+/**
+ * @brief Motor power (PWM value) for M2 [0 - UINT16_MAX]
+ */
+LOG_ADD_CORE(LOG_UINT16, m2s, &motor_ratios[MOTOR_M2])
+/**
+ * @brief Motor power (PWM value) for M3 [0 - UINT16_MAX]
+ */
+LOG_ADD_CORE(LOG_UINT16, m3s, &motor_ratios[MOTOR_M3])
+/**
+ * @brief Motor power (PWM value) for M4 [0 - UINT16_MAX]
+ */
+LOG_ADD_CORE(LOG_UINT16, m4s, &motor_ratios[MOTOR_M4])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 LOG_GROUP_STOP(motor)
+
+
+
+

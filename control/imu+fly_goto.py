@@ -13,31 +13,33 @@ current_datetime = datetime.datetime.now()
 datetime_string = current_datetime.strftime("%m%d-%H%M")
 
 
-URI = 'radio://0/80/2M/E7E7E7E706'
+URI = 'radio://0/80/2M/E7E7E7E705'
 
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
 
 # Create an empty NumPy array to hold the IMU data
-imu_data = np.empty((0, 9))
+imu_data = np.empty((0, 12))
 
 def process_imu_data(timestamp, data, logconf):
     global imu_data
-    
+    acc_x = data['stateEstimateZ.ax']
+    acc_y = data['stateEstimateZ.ay']
+    acc_z = data['stateEstimateZ.az']
     gyro_x = data['gyro.xRaw']
     gyro_y = data['gyro.yRaw']
     gyro_z = data['gyro.zRaw']
-    motor1 = data['motor.m1']
-    motor2 = data['motor.m2']
-    motor3 = data['motor.m3']
-    motor4 = data['motor.m4']
+    motor1 = data['motor.m1s']
+    motor2 = data['motor.m2s']
+    motor3 = data['motor.m3s']
+    motor4 = data['motor.m4s']
 
 
 
     current_time = time.monotonic() - start_time
     height = data['range.zrange']
     # print(f"IMU data: acc_x={acc_x}, acc_y={acc_y}, acc_z={acc_z}, gyro_x={gyro_x}, gyro_y={gyro_y}, gyro_z={gyro_z},time={current_time}")
-    imu_data = np.vstack((imu_data, [gyro_x, gyro_y, gyro_z, motor1, motor2, motor3, motor4, current_time, height]))
+    imu_data = np.vstack((imu_data, [acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z, motor1, motor2, motor3, motor4, current_time, height]))
 
 
 
@@ -63,14 +65,16 @@ if __name__ == '__main__':
 
         # Add IMU log config version 1
         imu_log_config = LogConfig(name='imu_data', period_in_ms=10)
-
+        imu_log_config.add_variable('stateEstimateZ.ax', 'int16_t')
+        imu_log_config.add_variable('stateEstimateZ.ay', 'int16_t')
+        imu_log_config.add_variable('stateEstimateZ.az', 'int16_t')
         imu_log_config.add_variable('gyro.xRaw', 'int16_t')
         imu_log_config.add_variable('gyro.yRaw', 'int16_t')
         imu_log_config.add_variable('gyro.zRaw', 'int16_t')
-        imu_log_config.add_variable('motor.m1', 'uint32_t')
-        imu_log_config.add_variable('motor.m2', 'uint32_t')
-        imu_log_config.add_variable('motor.m3', 'uint32_t')
-        imu_log_config.add_variable('motor.m4', 'uint32_t')
+        imu_log_config.add_variable('motor.m1s', 'uint16_t')
+        imu_log_config.add_variable('motor.m2s', 'uint16_t')
+        imu_log_config.add_variable('motor.m3s', 'uint16_t')
+        imu_log_config.add_variable('motor.m4s', 'uint16_t')
         imu_log_config.add_variable('range.zrange', 'uint16_t')
 
 

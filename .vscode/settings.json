@@ -7,6 +7,18 @@
     "files.associations": {
         "bootloader.h": "c",
         "pid.h": "c",
-        "param.h": "c"
+        "param.h": "c",
+        "*.tcc": "c",
+        "bitset": "c",
+        "optional": "c",
+        "functional": "c",
+        "random": "c",
+        "fstream": "c",
+        "istream": "c",
+        "ostream": "c",
+        "sstream": "c",
+        "streambuf": "c",
+        "memory_resource": "c",
+        "condition_variable": "c"
     }
 }

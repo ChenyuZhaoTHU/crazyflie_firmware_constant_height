@@ -175,7 +175,7 @@ class CNN(object):
         model.add(LSTM(20, activation='relu'))
         
         model.add(tf.keras.layers.BatchNormalization(center=True, scale=True))
-        model.add(tf.keras.layers.Dense(200, activation=tf.nn.relu))
+        model.add(tf.keras.layers.Dense(100, activation=tf.nn.relu))
         model.add(tf.keras.layers.BatchNormalization(center=True, scale=True))
         # model.add(tf.keras.layers.Dense(20, activation=tf.nn.relu))
 
@@ -242,8 +242,8 @@ def test_n(test_data, test_label):
     # ooout3 = model_pre1.predict(load_data()[85:90,:,:,:])
     # print(np.shape(test_label1))
     # print(np.shape(ooout1))
-    print(ooout1,'\n',test_label[0:3,:])
-    print(ooout2,'\n',test_label[57:,:])
+    print(ooout1,'\n  group1',test_label[0:3,:])
+    print(ooout2,'\n  group2',test_label[57:,:])
     # print(ooout3)
 
 
