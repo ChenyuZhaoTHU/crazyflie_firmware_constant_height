@@ -26,9 +26,14 @@ def process_imu_data(timestamp, data, logconf):
     acc_x = data['stateEstimateZ.ax']
     acc_y = data['stateEstimateZ.ay']
     acc_z = data['stateEstimateZ.az']
-    gyro_x = data['gyro.xRaw']
-    gyro_y = data['gyro.yRaw']
-    gyro_z = data['gyro.zRaw']
+    # gyro_x = data['gyro.xRaw']
+    # gyro_y = data['gyro.yRaw']
+    # gyro_z = data['gyro.zRaw']
+
+    gyro_x = data['stateEstimateZ.ax']
+    gyro_y = data['stateEstimateZ.ay']
+    gyro_z = data['stateEstimateZ.az']
+
     motor1 = data['motor.m1s']
     motor2 = data['motor.m2s']
     motor3 = data['motor.m3s']

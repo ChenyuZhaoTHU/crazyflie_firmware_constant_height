@@ -1,0 +1,3 @@
+2023.11.01-acc.x acc.y acc.z gyro.x gyro.y gyro.z zrange-v=0.2m/s-height_desk=80cm-id=06
+
+2023.11.02-gyro.xRaw gyro.yRaw gyro.zRaw motor1 motor2 motor3 motor4 zrange-v=0.2m/s-height_desk=80cm
