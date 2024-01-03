@@ -26,13 +26,13 @@ def process_imu_data(timestamp, data, logconf):
     acc_x = data['stateEstimateZ.ax']
     acc_y = data['stateEstimateZ.ay']
     acc_z = data['stateEstimateZ.az']
-    # gyro_x = data['gyro.xRaw']
-    # gyro_y = data['gyro.yRaw']
-    # gyro_z = data['gyro.zRaw']
+    gyro_x = data['gyro.xRaw']
+    gyro_y = data['gyro.yRaw']
+    gyro_z = data['gyro.zRaw']
 
-    gyro_x = data['stateEstimateZ.ax']
-    gyro_y = data['stateEstimateZ.ay']
-    gyro_z = data['stateEstimateZ.az']
+    # gyro_x = data['stateEstimateZ.ratePitch']
+    # gyro_y = data['stateEstimateZ.rateRoll']
+    # gyro_z = data['stateEstimateZ.rateYaw']
 
     motor1 = data['motor.m1s']
     motor2 = data['motor.m2s']
@@ -114,11 +114,11 @@ if __name__ == '__main__':
                 elif keyboard.is_pressed('f'):
                     # Move forward
                     print('Moving forward 2m')
-                    mc.forward(2,0.15)
+                    mc.forward(2,0.2)
                 elif keyboard.is_pressed('b'):
                     # Move backward
                     print('Moving backward 2m')
-                    mc.back(2,0.15)
+                    mc.back(2,0.2)
                 elif keyboard.is_pressed('left'):
                     # Move left
                     print('Moving left 0.1m')
