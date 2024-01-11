@@ -19,7 +19,7 @@ URI = 'radio://0/80/2M/E7E7E7E705'
 logging.basicConfig(level=logging.ERROR)
 
 # Create an empty NumPy array to hold the IMU data
-imu_data = np.empty((0, 12))
+imu_data = np.empty((0, 13))
 
 def process_imu_data(timestamp, data, logconf):
     global imu_data
@@ -38,13 +38,13 @@ def process_imu_data(timestamp, data, logconf):
     motor2 = data['motor.m2s']
     motor3 = data['motor.m3s']
     motor4 = data['motor.m4s']
-
+    quat = data['stateEstimateZ.quat']
 
 
     current_time = time.monotonic() - start_time
     height = data['range.zrange']
     # print(f"IMU data: acc_x={acc_x}, acc_y={acc_y}, acc_z={acc_z}, gyro_x={gyro_x}, gyro_y={gyro_y}, gyro_z={gyro_z},time={current_time}")
-    imu_data = np.vstack((imu_data, [acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z, motor1, motor2, motor3, motor4, current_time, height]))
+    imu_data = np.vstack((imu_data, [acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z, motor1, motor2, motor3, motor4, quat, current_time, height]))
 
 
 
@@ -80,6 +80,7 @@ if __name__ == '__main__':
         imu_log_config.add_variable('motor.m2s', 'uint16_t')
         imu_log_config.add_variable('motor.m3s', 'uint16_t')
         imu_log_config.add_variable('motor.m4s', 'uint16_t')
+        imu_log_config.add_variable('stateEstimateZ.quat', 'uint32_t')
         imu_log_config.add_variable('range.zrange', 'uint16_t')
 
 
