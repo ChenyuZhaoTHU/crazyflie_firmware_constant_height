@@ -19,6 +19,8 @@
         "sstream": "c",
         "streambuf": "c",
         "memory_resource": "c",
-        "condition_variable": "c"
+        "condition_variable": "c",
+        "cpx.h": "c",
+        "log.h": "c"
     }
 }

@@ -13,7 +13,7 @@ current_datetime = datetime.datetime.now()
 datetime_string = current_datetime.strftime("%m%d-%H%M")
 
 
-URI = 'radio://0/80/2M/E7E7E7E705'
+URI = 'radio://0/80/2M/E7E7E7E707'
 
 # Only output errors from the logging framework
 logging.basicConfig(level=logging.ERROR)
