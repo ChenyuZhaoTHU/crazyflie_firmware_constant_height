@@ -115,11 +115,11 @@ if __name__ == '__main__':
                 elif keyboard.is_pressed('f'):
                     # Move forward
                     print('Moving forward 2m')
-                    mc.forward(2,0.2)
+                    mc.forward(2,0.3)
                 elif keyboard.is_pressed('b'):
                     # Move backward
                     print('Moving backward 2m')
-                    mc.back(2,0.2)
+                    mc.back(2,0.3)
                 elif keyboard.is_pressed('left'):
                     # Move left
                     print('Moving left 0.1m')
