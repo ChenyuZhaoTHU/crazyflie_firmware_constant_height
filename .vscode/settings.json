@@ -21,6 +21,7 @@
         "memory_resource": "c",
         "condition_variable": "c",
         "cpx.h": "c",
-        "log.h": "c"
+        "log.h": "c",
+        "math.h": "c"
     }
 }
