@@ -151,7 +151,7 @@ int isEmpty10(CircularQueue10 *q) {
     return q->size == 0;
 }
 
-void enqueue(CircularQueue *queue, int16_t element) {
+void enqueueDataSequence(CircularQueue *queue, int16_t element) {
     if (queue->size >= RAWDATA_SIZE) {
         for (int i = 0; i < RAWDATA_SIZE - 1; i++) {
             for (int j = 0; j < DATA_DIMENSION; j++) {
@@ -326,59 +326,54 @@ void appMain() {
     initQueue(motor2_1_dataQueue);
     initQueue(accX_dataQueue);
     initQueue(motor3_1_dataQueue);
-    DEBUG_PRINT("initial sucess\n");
+    DEBUG_PRINT("Initiate sucessfully... Processing begins.\n");
 
+    // Processing Begins and enter the main loop.
     while(1){
-        // !!! Replace following rows with LogGet() function
 
-
-
-        vTaskDelay(M2T(10));
+        // ****************** Preparing the data ****************
+        // 
+        // Reading data from sensors... accZ, accX, gyroY, m1, m2, m3, m4.
+        vTaskDelay(M2T(10)); // Data and processing frequency at 100 Hz.
         int16_t accZ = logGetUint(logGetVarId("stateEstimateZ","az"));
-        // int16_t accX = logGetUint(logGetVarId("stateEstimateZ","ax"));
-        // int16_t gyroY = logGetUint(logGetVarId("gyro","yRaw"));
+        int16_t accX = logGetUint(logGetVarId("stateEstimateZ","ax"));
+        int16_t gyroY = logGetUint(logGetVarId("gyro","yRaw"));
         int16_t motor1 = logGetUint(logGetVarId("motor","m1s"));
         int16_t motor2 = logGetUint(logGetVarId("motor","m2s"));
         int16_t motor3 = logGetUint(logGetVarId("motor","m3s"));
         int16_t motor4 = logGetUint(logGetVarId("motor","m4s"));
+        // 
+        // Construct the data sequence 
+        enqueueDataSequence(accZ_dataQueue, accZ);
+        enqueueDataSequence(gyroY_dataQueue, gyroY);
+        enqueueDataSequence(motor2_1_dataQueue, motor2 - motor1);
+        enqueueDataSequence(accX_dataQueue, accX);
+        enqueueDataSequence(motor3_1_dataQueue, motor3 - motor1);
+
+
+        // ****************** Section 4 Ground Effect Profiling from Motors and IMU ****************
+        //
+        // Section 4.2  Fluctuation Components Feature Extraction (FC-FE).
+        int mag1 = STFTandextraction(accZ_dataQueue, RAWDATA_SIZE);
+        int mag2 = STFTandextraction(gyroY_dataQueue, RAWDATA_SIZE);
+        int mag3 = STFTandextraction(motor2_1_dataQueue, RAWDATA_SIZE);
+        int mag4 = STFTandextraction(accX_dataQueue, RAWDATA_SIZE);
+        int mag5 = STFTandextraction(motor3_1_dataQueue, RAWDATA_SIZE);
+        // 
+        //  Section 4.3 Cascaded Cross-Spectrum Feature Fusion (CCS-FF).
+        int fusion_result = mag1*mag2*mag3*mag4*mag5;
+
+
+        // ****************** Section 5 Ground Effect Profiling from Motors and IMU ****************
+        //
+        // Section 5.1 Physical Knowledge-Aided Light Weight Predictor
+        // Calculate the disturbance force in Z axis
+        int Fa_raw = s1_calFa(accZ, motor1/65535,motor2/65535, motor3/65535, motor4/65535);
         
 
 
 
-        // enqueue(accZ_dataQueue, accZ);
-        // enqueue(gyroY_dataQueue, gyroY);
-        // enqueue(motor2_1_dataQueue, motor2 - motor1);
-        // enqueue(accX_dataQueue, accX);
-        // enqueue(motor3_1_dataQueue, motor3 - motor1);
-
-
-
-        // int16_t accZ = logGetUint(logGetVarId("stateEstimateZ","az"));
-        // enqueue(accZ_dataQueue, (int16_t)12);
-        // enqueue(gyroY_dataQueue, (int16_t)12);
-        // enqueue(motor2_1_dataQueue, (int16_t)12);
-        // enqueue(accX_dataQueue, 12);
-        // enqueue(motor3_1_dataQueue, 12);
-
-
-        // DEBUG_PRINT("is entry (%u)\n", (uint8_t)accZ);
-
-
-
-
-
-
-        // int mag1 = STFTandextraction(accZ_dataQueue, RAWDATA_SIZE);
-        // int mag2 = STFTandextraction(gyroY_dataQueue, RAWDATA_SIZE);
-        // int mag3 = STFTandextraction(motor2_1_dataQueue, RAWDATA_SIZE);
-        // int mag4 = STFTandextraction(accX_dataQueue, RAWDATA_SIZE);
-        // int mag5 = STFTandextraction(motor3_1_dataQueue, RAWDATA_SIZE);
-        // int fusion_result = mag1*mag2*mag3*mag4*mag5;
-
-        // // DEBUG_PRINT("1 entry (%u)\n", (uint16_t)fusion_result);
-
-
-
+        
         // // CFAR detection  Part
         // enqueueCFAR(fusion_dataQueue, fusion_result);
         // int N = 100;
@@ -392,7 +387,6 @@ void appMain() {
 
        
         
-        int Fa_raw = s1_calFa(accZ, motor1/65535,motor2/65535, motor3/65535, motor4/65535);
         
         enqueue10(Fa_dataQueue,Fa_raw);
         int Fa_filtered = average((double*)Fa_dataQueue->data, 10);
